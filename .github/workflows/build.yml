@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: app-debug
 
       - name: Build APK with standard Gradle
         run: gradle assembleDebug
@@ -50,23 +50,3 @@ jobs:
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/*.apk
-          rm -rf temp_src youtube-cx.zip
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Build APK with Gradle
-        run: ./gradlew assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
-          
