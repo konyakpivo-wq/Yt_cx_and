@@ -18,7 +18,7 @@ jobs:
           echo "Распаковываем архив..."
           unzip -q youtube-cx.zip -d temp_src
           
-          echo "Ищем корень проекта (где лежит settings.gradle.kts)..."
+          echo "Ищем корень проекта..."
           ROOT_FILE=$(find temp_src -name "settings.gradle.kts" -o -name "settings.gradle" | head -n 1)
           
           if [ -z "$ROOT_FILE" ]; then
@@ -27,13 +27,9 @@ jobs:
           fi
           
           PROJECT_ROOT=$(dirname "$ROOT_FILE")
-          echo "Корень проекта найден: $PROJECT_ROOT"
-          
           echo "Перемещаем файлы в корень репозитория..."
           mv "$PROJECT_ROOT"/* .
           mv "$PROJECT_ROOT"/.* . 2>/dev/null || true
-          
-          echo "Удаляем временные файлы..."
           rm -rf temp_src youtube-cx.zip
 
       - name: Set up JDK 17
@@ -41,6 +37,19 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Generate Dummy Google Services JSON (if missing)
+        run: |
+          if [ ! -f "app/google-services.json" ]; then
+            echo "Создаем затычку для google-services.json..."
+            mkdir -p app
+            echo '{"project_info":{"project_number":"123456789","project_id":"gmscx-app"},"client":[{"client_info":{"mobilesdk_app_id":"1:123456789:android:123456789","android_client_info":{"package_name":"com.gmscx.services"}},"api_key":[{"current_key":"AIzaSyDummyKeyForBuildOnly"}]}]}' > app/google-services.json
+          fi
+
+      - name: Generate Debug Keystore
+        run: |
+          echo "Генерируем debug.keystore..."
+          keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
       - name: Build APK with standard Gradle
         run: gradle assembleDebug
