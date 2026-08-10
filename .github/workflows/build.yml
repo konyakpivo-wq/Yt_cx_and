@@ -18,7 +18,7 @@ jobs:
           echo "Распаковываем архив..."
           unzip -q youtube-cx.zip -d temp_src
           
-          echo "Ищем корень проекта..."
+          echo "Ищем корень проекта (где лежит settings.gradle.kts)..."
           ROOT_FILE=$(find temp_src -name "settings.gradle.kts" -o -name "settings.gradle" | head -n 1)
           
           if [ -z "$ROOT_FILE" ]; then
@@ -43,7 +43,7 @@ jobs:
           if [ ! -f "app/google-services.json" ]; then
             echo "Создаем затычку для google-services.json..."
             mkdir -p app
-            echo '{"project_info":{"project_number":"123456789","project_id":"gmscx-app"},"client":[{"client_info":{"mobilesdk_app_id":"1:123456789:android:123456789","android_client_info":{"package_name":"com.gmscx.services"}},"api_key":[{"current_key":"AIzaSyDummyKeyForBuildOnly"}]}]}' > app/google-services.json
+            echo '{"project_info":{"project_number":"123456789","project_id":"yt-cx-app"},"client":[{"client_info":{"mobilesdk_app_id":"1:123456789:android:123456789","android_client_info":{"package_name":"com.yt.cx"}},"api_key":[{"current_key":"AIzaSyDummyKeyForBuildOnly"}]}]}' > app/google-services.json
           fi
 
       - name: Generate Debug Keystore
